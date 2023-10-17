@@ -1,4 +1,4 @@
-see# ai-research
+# ai-research
 Research into video/image diffusion techniques
 
 ## Getting started
