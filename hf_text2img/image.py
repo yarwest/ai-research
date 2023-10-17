@@ -53,7 +53,7 @@ def main(args):
 
     if args.base_img:
         base_image = Image.open(args.base_img).convert("RGB")
-        base_image = base_image.resize((768, 512))
+        base_image = base_image.resize((args.img_h, args.img_w))
         pipe = img2img(
             prompt=prompt,
             negative_prompt=negativePrompt,
