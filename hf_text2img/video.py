@@ -21,13 +21,13 @@ logging.basicConfig(
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--prompt", help="Prompt for video generation", type=str, required=True)
-    parser.add_argument("--base_img", help="Base video used for video2video diffusion", type=str, required=False)
+    parser.add_argument("--base_vid", help="Base video used for video2video diffusion", type=str, required=False)
     parser.add_argument("--data_dir", help="Directory with training data", type=str, required=False)
     parser.add_argument("--count", help="Number of generated videos", type=str, required=False)
     parser.add_argument("--seed", help="Seed used for generation of random noise starting image", type=int, required=False, default=512)
     parser.add_argument("--num_inference_steps", help="The number of inference steps. If you want faster results you can use a smaller number. If you want potentially higher quality results, you can use larger numbers.", type=int, required=False, default=50)
     parser.add_argument("--img_w", help="Height of generated video", type=int, required=False, default=512)
-    parser.add_argument("--img_h", help="Width of generated video", type=int, required=False, default=768)
+    parser.add_argument("--img_h", help="Width of generated video", type=int, required=False, default=512)
 
     return parser.parse_args()
 
@@ -49,7 +49,7 @@ def main(args):
     generator = torch.manual_seed(args.seed)
 
     if args.base_video:
-        base_image = Image.open(args.base_img).convert("RGB")
+        base_image = Image.open(args.base_vid).convert("RGB")
         base_image = base_image.resize((args.img_h, args.img_w))
         #video2video
     else:
