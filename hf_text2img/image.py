@@ -60,7 +60,7 @@ def main(args):
         base_image = Image.open(os.path.join(os.path.dirname(__file__), args.base_img)).convert("RGB")
         # base_image = base_image.resize((args.img_w, args.img_h))
         if(args.mask_img):
-            inpainting = StableDiffusionInpaintPipeline(**text2img.components)
+            inpainting = StableDiffusionInpaintPipeline(**text2img.components).from_pretrained("stabilityai/stable-diffusion-2-inpainting")
             mask_image = Image.open(os.path.join(os.path.dirname(__file__), args.mask_img)).convert("L")
             pipe = inpainting(
                 prompt=prompt,
@@ -96,7 +96,7 @@ def main(args):
             )
     else:
         pipe = text2img(
-            prompt,
+            prompt=prompt,
             negative_prompt=negativePrompt,
             guidance_scale=7.5,
             height=args.img_h,
