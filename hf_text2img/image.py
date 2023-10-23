@@ -2,14 +2,17 @@ import argparse
 import logging
 import sys
 import os
+import torch
 from PIL import Image
 
 from diffusers import (
     StableDiffusionPipeline,
     StableDiffusionImg2ImgPipeline,
+    StableDiffusionInpaintPipeline,
+    StableDiffusionImageVariationPipeline
 )
 
-import torch
+from promptBuilder import getNegativePrompts, getPositivePrompts
 
 __author__ = "Yarno Boelens"
 
@@ -24,7 +27,8 @@ logging.basicConfig(
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--prompt", help="Prompt for image generation", type=str, required=True)
-    parser.add_argument("--base_img", help="Base image used for img2img diffusion", type=str, required=False)
+    parser.add_argument("--base_img", help="Relative path to base image used for img2img diffusion", type=str, required=False)
+    parser.add_argument("--mask_img", help="Relative path to mask image used for inpainting. White pixels in the mask are repainted while black pixels are preserved", type=str, required=False)
     parser.add_argument("--data_dir", help="Directory with training data", type=str, required=False)
     parser.add_argument("--count", help="Number of generated images", type=str, required=False)
     parser.add_argument("--seed", help="Seed used for generation of random noise starting image", type=int, required=False, default=512)
@@ -42,26 +46,39 @@ def main(args):
     num_images = args.count or 1
     prompt = [args.prompt] * num_images
 
-    negativePrompt = ["ugly, tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, poorly drawn eyes, poorly drawn teeth, out of frame, mutation, mutated, extra limbs, extra legs, extra arms, extra fingers, disfigured, deformed, cross-eye, body out of frame, head out of frame, blurry, bad art, bad anatomy, blurred, text, watermark, grainy"] * num_images
+    negativePrompt = [",".join(getNegativePrompts())] * num_images
 
     # init pipelines & components
     text2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4",
                                                     #revision="fp16", torch_dtype=torch.float32
             )
-    img2img = StableDiffusionImg2ImgPipeline(**text2img.components)
     generator = torch.manual_seed(args.seed)
 
     if args.base_img:
         base_image = Image.open(os.path.join(os.path.dirname(__file__), args.base_img)).convert("RGB")
         # base_image = base_image.resize((args.img_w, args.img_h))
-        pipe = img2img(
-            prompt=prompt,
-            negative_prompt=negativePrompt,
-            image=base_image,
-            guidance_scale=7.5,
-            num_inference_steps=args.num_inference_steps,
-            generator=generator
-        )
+        if(args.mask_img):
+            mask_image = Image.open(os.path.join(os.path.dirname(__file__), args.mask_img)).convert("L")
+            pipe = inpainting(
+                prompt=prompt,
+                negative_prompt=negativePrompt,
+                image=base_image,
+                mask_image=mask_image,
+                guidance_scale=7.5,
+                num_inference_steps=args.num_inference_steps,
+                generator=generator
+            )
+        else:
+            img2img = StableDiffusionImg2ImgPipeline(**text2img.components)
+            pipe = img2img(
+                prompt=prompt,
+                negative_prompt=negativePrompt,
+                image=base_image,
+                guidance_scale=7.5,
+                strength=0.75,
+                num_inference_steps=args.num_inference_steps,
+                generator=generator
+            )
     else:
         pipe = text2img(
             prompt,

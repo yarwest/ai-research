@@ -21,7 +21,17 @@ After activating the virtual environment, the required dependencies (see `requir
 
 After succesfully fulfilling the dependencies, the model inference can simply be executed by running the relevant script.
 
-`$ python3 train.py`
+### text2img
+
+`$ python3 image.py --prompt "alien" --img_h 768 --num_inference_steps 25 --seed 1024`
+
+### img2img
+
+`$ python3 image.py --prompt "4k, dslr, sharp focus, realistic, beautiful" --base_img "out/asia grocery store.png" --img_h 768 --num_inference_steps 10 --seed 1024`
+
+### inpainting
+
+`$ python3 image.py --prompt "alien" --base_img "path/to/base.png" --mask_img "path/to/mask.png" --img_h 768 --num_inference_steps 25 --seed 1024`
 
 ## Considerations
 
@@ -42,9 +52,9 @@ When choosing image sizes, we advise the following:
 
 ## Sources:
 
-Stable Diffusion with 🧨 Diffusers - Published August 22, 2022: https://huggingface.co/blog/stable_diffusion
-Stable Diffusion 1 vs 2 - What you need to know - Published December 6, 2022: https://www.assemblyai.com/blog/stable-diffusion-1-vs-2-what-you-need-to-know/
-Text-to-Video: The Task, Challenges and the Current State - Published May 8, 2023: https://huggingface.co/blog/text-to-video
-Propmt guide: https://stable-diffusion-art.com/prompt-guide
+- Stable Diffusion with 🧨 Diffusers - Published August 22, 2022: https://huggingface.co/blog/stable_diffusion
+- Stable Diffusion 1 vs 2 - What you need to know - Published December 6, 2022: https://www.assemblyai.com/blog/stable-diffusion-1-vs-2-what-you-need-to-know/
+- Text-to-Video: The Task, Challenges and the Current State - Published May 8, 2023: https://huggingface.co/blog/text-to-video
+- Prompt guide: https://stable-diffusion-art.com/prompt-guide
 
-Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
+- Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/

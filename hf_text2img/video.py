@@ -2,11 +2,12 @@ import argparse
 import logging
 import sys
 import os
+import torch
 
 from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler
 from diffusers.utils import export_to_video
 
-import torch
+from promptBuilder import getNegativePrompts, getPositivePrompts 
 
 __author__ = "Yarno Boelens"
 
@@ -39,7 +40,7 @@ def main(args):
     num_videos = args.count or 1
     prompt = [args.prompt] * num_videos
 
-    negativePrompt = ["ugly, tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, mutation, mutated, extra limbs, extra legs, extra arms, disfigured, deformed, cross-eye, body out of frame, blurry, bad art, bad anatomy, blurred, text, watermark, grainy"] * num_videos
+    negativePrompt = [getNegativePrompts().join(',')] * num_videos
 
     # init pipelines & components
     text2video = DiffusionPipeline.from_pretrained("damo-vilab/text-to-video-ms-1.7b"
