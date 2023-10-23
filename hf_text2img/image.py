@@ -4,6 +4,7 @@ import sys
 import os
 import torch
 import numpy as np 
+import uuid
 from PIL import Image
 
 from diffusers import (
@@ -46,6 +47,8 @@ def main(args):
     # Create output directory if not exists
     if not os.path.exists('./out'):
         os.makedirs('out/')
+
+    processID = uuid.uuid4()
 
     prompt = [args.prompt] * args.count
 
@@ -131,14 +134,13 @@ def main(args):
     logging.info("==== Pipeline completed, storing images ====")
     images = pipe.images
 
-    fileName = '_'.join(args.prompt.split(' '))
     if(args.base_img):
         if(args.mask_img):
-            fileName += '-inpainting'
+            fileName = 'inpainting'
         elif(args.variation):
-            fileName += '-variation'
+            fileName = 'variation'
         else:
-            fileName += '-img2img'
+            fileName = 'img2img'
     for i, image in enumerate(images):
         if(args.mask_img and args.strict_mask):
             # Convert mask to grayscale NumPy array
@@ -154,8 +156,12 @@ def main(args):
             image = Image.fromarray(unmasked_unchanged_image_arr.round().astype("uint8"))
 
         # save image with
-        image.save(f"./out/{fileName}-{args.seed}-{args.num_inference_steps}its-{i}.png")
+        image.save(f"./out/{processID}-{i}.png")
 
+    with open('output-log.txt', 'a+') as file:
+        if(os.stat("output-log.txt").st_size == 0):
+            file.write(f"process | algorithm | prompt | seed | num_inference_steps | number\n")
+        file.write(f"{processID}|{fileName}|{args.prompt}|{args.seed}|{args.num_inference_steps}its|{i}\n")
 
 if __name__ == "__main__":
     main(parse_args())
