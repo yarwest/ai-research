@@ -31,7 +31,7 @@ After succesfully fulfilling the dependencies, the model inference can simply be
 
 ### inpainting
 
-`$ python3 image.py --prompt "alien" --base_img "path/to/base.png" --mask_img "path/to/mask.png" --img_h 768 --num_inference_steps 25 --seed 1024`
+`$ python3 image.py --prompt "shop keeper and customers, photo, photography, dslr, humans, indoor lighting, national geographic, sharp focus, realistic, beautiful, 4k" --base_img "out\edits\asia grocery store.png" --mask_img "out/edits/AIsia store bw.png" --img_h 768 --num_inference_steps 25 --seed 1024`
 
 ### variation
 
@@ -60,5 +60,6 @@ When choosing image sizes, we advise the following:
 - Stable Diffusion 1 vs 2 - What you need to know - Published December 6, 2022: https://www.assemblyai.com/blog/stable-diffusion-1-vs-2-what-you-need-to-know/
 - Text-to-Video: The Task, Challenges and the Current State - Published May 8, 2023: https://huggingface.co/blog/text-to-video
 - Prompt guide: https://stable-diffusion-art.com/prompt-guide
+- 10 prompts for realistic photography portraits: https://medium.com/mlearning-ai/10-ai-prompts-for-realistic-photography-portraits-da5edeacb031
 
 - Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/

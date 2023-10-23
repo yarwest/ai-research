@@ -22,7 +22,7 @@ def parse_args():
     return parser.parse_args()
 
 def getNegativePrompts():
-    return [
+    return ",".join([
         "ugly",
         "tiling",
         "poorly drawn hands",
@@ -57,10 +57,10 @@ def getNegativePrompts():
         "signature",
         "low contrast",
         "cut off"
-    ]
+    ])
 
 def getPositivePrompts():
-    return [
+    return ",".join([
         "cinematic lighting",
         "4k",
         "futuristic",
@@ -76,4 +76,4 @@ def getPositivePrompts():
         "dslr",
         "ray tracing",
         "realistic",
-    ]
+    ])
