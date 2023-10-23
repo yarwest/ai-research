@@ -27,13 +27,29 @@ After succesfully fulfilling the dependencies, the model inference can simply be
 
 ### img2img
 
-`$ python3 image.py --prompt "4k, dslr, sharp focus, realistic, beautiful" --base_img "out\edits\asia grocery store.png" --img_h 768 --num_inference_steps 10 --seed 1024`
+`$ python3 image.py --prompt "4k, dslr, sharp focus, high resolution, realistic, beautiful" --base_img "out\edits\asia grocery store.png" --img_h 768 --num_inference_steps 10 --seed 1024`
+
+Required params: base_img
 
 ### inpainting
 
-`$ python3 image.py --prompt "shop keeper and customers, photo, photography, dslr, humans, indoor lighting, national geographic, sharp focus, realistic, beautiful, 4k" --base_img "out\edits\asia grocery store.png" --mask_img "out/edits/AIsia store bw.png" --img_h 768 --num_inference_steps 25 --seed 1024`
+Required params: base_img, mask_img
+
+`$ python3 image.py --prompt "shop keeper and customers, photo, photography, dslr, humans, indoor lighting, national geographic, sharp focus, high resolution, realistic, beautiful, 4k" --base_img "out\edits\asia grocery store.png" --mask_img "out/edits/AIsia store bw.png" --img_h 768 --num_inference_steps 25 --seed 1024`
+
+#### Strict mask
+
+"Generally speaking, StableDiffusionInpaintPipeline (and other inpainting pipelines) will change the unmasked part of the image as well. If this behavior is undesirable, you can force the unmasked area to remain the same." (source 1.6)
+
+Strict mask implementation for preserving all pixels from base image based on black pixels in mask image.
+
+Required params: base_img, mask_img, strict_mask
+
+`$ python image.py --prompt "face, fingers, portrait, photo, photography, dslr, humans, highly detailed, national geographic, sharp focus, realistic, beautiful, 4k" --base_img "out\shop_keeper_and_customers,_photo,_photography,_dslr,_humans,_indoor_lighting,_national_geographic,_sharp_focus,_realistic,_beautiful,_4k-inpainting-1024-50its-0.png" --mask_img "out/edits/AIsia gen bw.png" --strict_mask True --img_h 768 --num_inference_steps 15 --seed 1024`
 
 ### variation
+
+Required params: base_img, variation
 
 `$ python3 image.py --prompt "alien" --base_img "path/to/base.png" --variation True --img_h 768 --num_inference_steps 25 --seed 1024`
 
@@ -56,10 +72,11 @@ When choosing image sizes, we advise the following:
 
 ## Sources:
 
-- Stable Diffusion with 🧨 Diffusers - Published August 22, 2022: https://huggingface.co/blog/stable_diffusion
-- Stable Diffusion 1 vs 2 - What you need to know - Published December 6, 2022: https://www.assemblyai.com/blog/stable-diffusion-1-vs-2-what-you-need-to-know/
-- Text-to-Video: The Task, Challenges and the Current State - Published May 8, 2023: https://huggingface.co/blog/text-to-video
-- Prompt guide: https://stable-diffusion-art.com/prompt-guide
-- 10 prompts for realistic photography portraits: https://medium.com/mlearning-ai/10-ai-prompts-for-realistic-photography-portraits-da5edeacb031
+1.1. Stable Diffusion with 🧨 Diffusers - Published August 22, 2022: https://huggingface.co/blog/stable_diffusion
+1.2. Stable Diffusion 1 vs 2 - What you need to know - Published December 6, 2022: https://www.assemblyai.com/blog/stable-diffusion-1-vs-2-what-you-need-to-know/
+1.3. Text-to-Video: The Task, Challenges and the Current State - Published May 8, 2023: https://huggingface.co/blog/text-to-video
+1.4. Prompt guide: https://stable-diffusion-art.com/prompt-guide
+1.5. 10 prompts for realistic photography portraits: https://medium.com/mlearning-ai/10-ai-prompts-for-realistic-photography-portraits-da5edeacb031
+1.6. Inpainting, Preserving the Unmasked Area of the Image: https://huggingface.co/docs/diffusers/using-diffusers/inpaint#preserving-the-unmasked-area-of-the-image
 
-- Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
+2.1. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/

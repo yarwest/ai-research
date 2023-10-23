@@ -1,6 +1,6 @@
-diffusers==0.10.2
+diffusers==0.21.0
 transformers
 scipy
 ftfy
 accelerate
-
+numpy

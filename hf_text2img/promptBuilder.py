@@ -61,19 +61,23 @@ def getNegativePrompts():
 
 def getPositivePrompts():
     return ",".join([
-        "cinematic lighting",
-        "4k",
+        "photo",
+        "photography",
+        "dslr",
+        "sharp focus",
         "futuristic",
         "sci-fi",
         "neon lightning",
         "photorealistic",
+        "high resolution", # !!
         "highly detailed", # !!
         "intricate design", # !!
-        "sharp focus",
         "dark",
         "dystopian",
         "stunningly beautiful",
-        "dslr",
         "ray tracing",
         "realistic",
+        "national geographic",
+        "cinematic lighting",
+        "4k",
     ])

@@ -3,6 +3,7 @@ import logging
 import sys
 import os
 import torch
+import numpy as np 
 from PIL import Image
 
 from diffusers import (
@@ -26,9 +27,10 @@ logging.basicConfig(
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", help="Prompt for image generation", type=str, required=True)
+    parser.add_argument("--prompt", help="Prompt for image generation", type=str, required=False, default="")
     parser.add_argument("--base_img", help="Relative path to base image used for img2img diffusion", type=str, required=False)
     parser.add_argument("--mask_img", help="Relative path to mask image used for inpainting. White pixels in the mask are repainted while black pixels are preserved", type=str, required=False)
+    parser.add_argument("--strict_mask", help="Pass True to use strict masking during inpainting, to ensure preservation of the black pixels from the mask image", type=bool, required=False, default=False)
     parser.add_argument("--data_dir", help="Directory with training data", type=str, required=False)
     parser.add_argument("--variation", help="Pass True to use the Image Variation model", type=bool, required=False)
     parser.add_argument("--count", help="Number of generated images", type=str, required=False, default=1)
@@ -60,16 +62,18 @@ def main(args):
         if(base_image.width != args.img_w or base_image.height != args.img_h):
             base_image = base_image.resize((args.img_w, args.img_h))
         if(args.mask_img):
-            inpainting = StableDiffusionInpaintPipeline(**text2img.components).from_pretrained("stabilityai/stable-diffusion-2-inpainting")
+            inpainting = StableDiffusionInpaintPipeline(**text2img.components).from_pretrained("runwayml/stable-diffusion-inpainting")
             mask_image = Image.open(os.path.join(os.path.dirname(__file__), args.mask_img)).convert("L")
             if(mask_image.width != args.img_w or mask_image.height != args.img_h):
                 mask_image = mask_image.resize((args.img_w, args.img_h))
+            
             pipe = inpainting(
                 prompt=f"{args.prompt}",
                 negative_prompt=getNegativePrompts(),
                 image=base_image,
                 mask_image=mask_image,
                 guidance_scale=7.5,
+                strength=0.75,
                 num_images_per_prompt=args.count,
                 num_inference_steps=args.num_inference_steps,
                 generator=generator,
@@ -113,7 +117,27 @@ def main(args):
     images = pipe.images
 
     fileName = '_'.join(args.prompt.split(' '))
+    if(args.base_img):
+        if(args.mask_img):
+            fileName += '-inpainting'
+        elif(args.variation):
+            fileName += '-variation'
+        else:
+            fileName += '-img2img'
     for i, image in enumerate(images):
+        if(args.mask_img and args.strict_mask):
+            # Convert mask to grayscale NumPy array
+            mask_image_arr = np.array(mask_image.convert("L"))
+            # Add a channel dimension to the end of the grayscale mask
+            mask_image_arr = mask_image_arr[:, :, None]
+            # Binarize the mask: 1s correspond to the pixels which are repainted
+            mask_image_arr = mask_image_arr.astype(np.float32) / 255.0
+            mask_image_arr[mask_image_arr < 0.5] = 0
+            mask_image_arr[mask_image_arr >= 0.5] = 1
+            # Take the masked pixels from the repainted image and the unmasked pixels from the initial image
+            unmasked_unchanged_image_arr = (1 - mask_image_arr) * base_image + mask_image_arr * image
+            image = Image.fromarray(unmasked_unchanged_image_arr.round().astype("uint8"))
+
         # save image with
         image.save(f"./out/{fileName}-{args.seed}-{args.num_inference_steps}its-{i}.png")
 
