@@ -80,5 +80,14 @@ When choosing image sizes, we advise the following:
 1.4. Prompt guide: https://stable-diffusion-art.com/prompt-guide
 1.5. 10 prompts for realistic photography portraits: https://medium.com/mlearning-ai/10-ai-prompts-for-realistic-photography-portraits-da5edeacb031
 1.6. Inpainting, Preserving the Unmasked Area of the Image: https://huggingface.co/docs/diffusers/using-diffusers/inpaint#preserving-the-unmasked-area-of-the-image
+1.7. Evaluating diffusion models: https://huggingface.co/docs/diffusers/conceptual/evaluation
 
-2.1. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
+## Coqui TTS (coqui_tts)
+
+### Voice cloning
+
+`$ python3 voice.py --prompt $'Hello, how are you? I am good, it is a nice day out. A little bit cold, yeah. It sucks, very, so ever correct, sir!\nAre you going to have some dinnner tonight? What will you eat?\nI hope you will enjoy your meal, just like I will.\nHave a good evening! See you later.' --voice "voice_file"`
+
+2.1. Coqui TTS: https://github.com/coqui-ai/tts
+2.2. Formatting TTS Dataset: https://tts.readthedocs.io/en/latest/formatting_your_dataset.html
+2.3. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/

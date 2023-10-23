@@ -1,0 +1,2 @@
+TTS
+# python-espeak-ng (uncomment for ubuntu)
