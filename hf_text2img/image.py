@@ -30,6 +30,7 @@ def parse_args():
     parser.add_argument("--base_img", help="Relative path to base image used for img2img diffusion", type=str, required=False)
     parser.add_argument("--mask_img", help="Relative path to mask image used for inpainting. White pixels in the mask are repainted while black pixels are preserved", type=str, required=False)
     parser.add_argument("--data_dir", help="Directory with training data", type=str, required=False)
+    parser.add_argument("--variation", help="Pass True to use the Image Variation model", type=bool, required=False)
     parser.add_argument("--count", help="Number of generated images", type=str, required=False)
     parser.add_argument("--seed", help="Seed used for generation of random noise starting image", type=int, required=False, default=512)
     parser.add_argument("--num_inference_steps", help="The number of inference steps. If you want faster results you can use a smaller number. If you want potentially higher quality results, you can use larger numbers.", type=int, required=False, default=50)
@@ -52,12 +53,14 @@ def main(args):
     text2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4",
                                                     #revision="fp16", torch_dtype=torch.float32
             )
+
     generator = torch.manual_seed(args.seed)
 
     if args.base_img:
         base_image = Image.open(os.path.join(os.path.dirname(__file__), args.base_img)).convert("RGB")
         # base_image = base_image.resize((args.img_w, args.img_h))
         if(args.mask_img):
+            inpainting = StableDiffusionInpaintPipeline(**text2img.components)
             mask_image = Image.open(os.path.join(os.path.dirname(__file__), args.mask_img)).convert("L")
             pipe = inpainting(
                 prompt=prompt,
@@ -65,6 +68,19 @@ def main(args):
                 image=base_image,
                 mask_image=mask_image,
                 guidance_scale=7.5,
+                num_inference_steps=args.num_inference_steps,
+                generator=generator
+            )
+        elif(args.variation):
+            variation = StableDiffusionImageVariationPipeline.from_pretrained(
+                "lambdalabs/sd-image-variations-diffusers", revision="v2.0"
+            )
+            pipe = variation(
+                prompt,
+                negative_prompt=negativePrompt,
+                guidance_scale=7.5,
+                height=args.img_h,
+                width=args.img_w,
                 num_inference_steps=args.num_inference_steps,
                 generator=generator
             )

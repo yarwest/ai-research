@@ -27,11 +27,15 @@ After succesfully fulfilling the dependencies, the model inference can simply be
 
 ### img2img
 
-`$ python3 image.py --prompt "4k, dslr, sharp focus, realistic, beautiful" --base_img "out/asia grocery store.png" --img_h 768 --num_inference_steps 10 --seed 1024`
+`$ python3 image.py --prompt "4k, dslr, sharp focus, realistic, beautiful" --base_img "out\edits\asia grocery store.png" --img_h 768 --num_inference_steps 10 --seed 1024`
 
 ### inpainting
 
 `$ python3 image.py --prompt "alien" --base_img "path/to/base.png" --mask_img "path/to/mask.png" --img_h 768 --num_inference_steps 25 --seed 1024`
+
+### variation
+
+`$ python3 image.py --prompt "alien" --base_img "path/to/base.png" --variation True --img_h 768 --num_inference_steps 25 --seed 1024`
 
 ## Considerations
 
