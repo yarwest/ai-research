@@ -21,6 +21,8 @@ After activating the virtual environment, the required dependencies (see `requir
 
 After succesfully fulfilling the dependencies, the model inference can simply be executed by running the relevant script.
 
+## HuggingFace Stable Diffusion (hf_stablediffusion)
+
 ### text2img
 
 `$ python3 image.py --prompt "alien" --img_h 768 --num_inference_steps 25 --seed 1024`
@@ -53,7 +55,7 @@ Required params: base_img, variation
 
 `$ python3 image.py --prompt "alien" --base_img "path/to/base.png" --variation True --img_h 768 --num_inference_steps 25 --seed 1024`
 
-## Considerations
+### Considerations
 
 Hyperparameters parameters
 
@@ -70,7 +72,7 @@ When choosing image sizes, we advise the following:
 - Going over 512 in both directions will repeat image areas (global coherence is lost).
 - The best way to create non-square images is to use 512 in one dimension, and a value larger than that in the other one.
 
-## Sources:
+### Sources:
 
 1.1. Stable Diffusion with 🧨 Diffusers - Published August 22, 2022: https://huggingface.co/blog/stable_diffusion
 1.2. Stable Diffusion 1 vs 2 - What you need to know - Published December 6, 2022: https://www.assemblyai.com/blog/stable-diffusion-1-vs-2-what-you-need-to-know/

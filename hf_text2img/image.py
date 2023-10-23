@@ -33,7 +33,8 @@ def parse_args():
     parser.add_argument("--strict_mask", help="Pass True to use strict masking during inpainting, to ensure preservation of the black pixels from the mask image", type=bool, required=False, default=False)
     parser.add_argument("--data_dir", help="Directory with training data", type=str, required=False)
     parser.add_argument("--variation", help="Pass True to use the Image Variation model", type=bool, required=False)
-    parser.add_argument("--count", help="Number of generated images", type=str, required=False, default=1)
+    parser.add_argument("--batch_size", help="Number of generators to be used in deterministic batch generation", type=int, required=False, default=1)
+    parser.add_argument("--count", help="Number of generated images", type=int, required=False, default=1)
     parser.add_argument("--seed", help="Seed used for generation of random noise starting image", type=int, required=False, default=512)
     parser.add_argument("--num_inference_steps", help="The number of inference steps. If you want faster results you can use a smaller number. If you want potentially higher quality results, you can use larger numbers.", type=int, required=False, default=50)
     parser.add_argument("--img_w", help="Height of generated image", type=int, required=False, default=512)
@@ -50,12 +51,18 @@ def main(args):
 
     negativePrompt = [getNegativePrompts()] * args.count
 
+    logging.info("==== Initialising HuggingFace Stable Diffusion pipelines ====")
     # init pipelines & components
     text2img = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4",
                                                     #revision="fp16", torch_dtype=torch.float32
             )
 
-    generator = torch.manual_seed(args.seed)
+    if(args.batch_size > 1):
+        generator = [torch.manual_seed(args.seed - i) for i in range(args.batch_size)]
+        nImages = args.batch_size
+    else:
+        generator = [torch.manual_seed(args.seed) for i in range(args.count)]
+        nImages = args.count
 
     if args.base_img:
         base_image = Image.open(os.path.join(os.path.dirname(__file__), args.base_img)).convert("RGB")
@@ -67,6 +74,7 @@ def main(args):
             if(mask_image.width != args.img_w or mask_image.height != args.img_h):
                 mask_image = mask_image.resize((args.img_w, args.img_h))
             
+            logging.info("==== Starting inpainting pipeline ====")
             pipe = inpainting(
                 prompt=f"{args.prompt}",
                 negative_prompt=getNegativePrompts(),
@@ -74,7 +82,7 @@ def main(args):
                 mask_image=mask_image,
                 guidance_scale=7.5,
                 strength=0.75,
-                num_images_per_prompt=args.count,
+                num_images_per_prompt=nImages,
                 num_inference_steps=args.num_inference_steps,
                 generator=generator,
                 height=args.img_h,
@@ -84,16 +92,19 @@ def main(args):
             variation = StableDiffusionImageVariationPipeline.from_pretrained(
                 "lambdalabs/sd-image-variations-diffusers", revision="v2.0"
             )
+            logging.info("==== Starting variation pipeline ====")
             pipe = variation(
                 guidance_scale=7.5,
                 height=args.img_h,
                 width=args.img_w,
                 image=base_image,
                 num_inference_steps=args.num_inference_steps,
-                generator=generator
+                generator=generator,
+                num_images_per_prompt=nImages
             )
         else:
             img2img = StableDiffusionImg2ImgPipeline(**text2img.components)
+            logging.info("==== Starting img2img pipeline ====")
             pipe = img2img(
                 prompt=prompt,
                 negative_prompt=negativePrompt,
@@ -101,9 +112,11 @@ def main(args):
                 guidance_scale=7.5,
                 strength=0.75,
                 num_inference_steps=args.num_inference_steps,
-                generator=generator
+                generator=generator,
+                num_images_per_prompt=nImages
             )
     else:
+        logging.info("==== Starting text2img pipeline ====")
         pipe = text2img(
             prompt=prompt,
             negative_prompt=negativePrompt,
@@ -111,9 +124,11 @@ def main(args):
             height=args.img_h,
             width=args.img_w,
             num_inference_steps=args.num_inference_steps,
-            generator=generator
+            generator=generator,
+            num_images_per_prompt=nImages
         )
 
+    logging.info("==== Pipeline completed, storing images ====")
     images = pipe.images
 
     fileName = '_'.join(args.prompt.split(' '))
