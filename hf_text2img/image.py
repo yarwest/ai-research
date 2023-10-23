@@ -76,11 +76,10 @@ def main(args):
                 "lambdalabs/sd-image-variations-diffusers", revision="v2.0"
             )
             pipe = variation(
-                prompt,
-                negative_prompt=negativePrompt,
                 guidance_scale=7.5,
                 height=args.img_h,
                 width=args.img_w,
+                image=base_image,
                 num_inference_steps=args.num_inference_steps,
                 generator=generator
             )
