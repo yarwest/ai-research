@@ -63,12 +63,13 @@ def main(args):
             "male": { },
             "mixed": {
                 'vctk': [ 'vits', 'fast_pitch' ],
-                'multi-dataset': [ 'tortoise-v2' ],
+                'multi-dataset': [ 'tortoise-v2', # no speaker_wav for tortoise? 
+                                  'bark' ],
                 'sam': ['tacotron-DDC'],
                 'blizzard2013': ['capacitron-t2-c50','capacitron-t2-c150_v2'],
             },
         },
-        'multilingual': { 'female': {}, 'male': {},'mixed':{'multi-dataset': ['xtts_v1','your_tts','bark'] }},
+        'multilingual': { 'female': {}, 'male': {},'mixed':{'multi-dataset': ['xtts_v1','your_tts'] }},
         'uk': { 'mai': ['glow-tts', 'vits']},
         'nl': {'mai': ['tacotron2-DCA'],'css10':['vits']},
         'pl': {'mai_femaile': ['vits']}
@@ -110,10 +111,15 @@ def main(args):
                             model.tts_to_file(text=args.prompt, speaker_wav=voiceFilePath, language="en", file_path=filePath)
                         else:
                             model.tts_to_file(text=args.prompt, speaker_wav=voiceFilePath, file_path=filePath)
-                        succesful.append(f"{modelName}-${dataset}")
+                        succesful.append(f"{modelName}-{dataset}")
                     except Exception as e:
-                        failed.append(f"{modelName}-${dataset}")
-                        logging.error(f"#### Failed to perform TTS for model {modelName} on dataset {dataset} ####", e)
+                        failed.append(f"{modelName}-{dataset}")
+                        logging.info(f"#### Failed to perform TTS for model {modelName} on dataset {dataset} ####", e)
+
+    with open('output-log.txt', 'a+') as file:
+        if(os.stat("output-log.txt").st_size == 0):
+            file.write(f"process | prompt | voice | succesful | failed\n")
+        file.write(f"{processID}|{args.prompt}|{args.voice}|{succesful}|{failed}\n")
 
     logging.info("#### Succesful ####", succesful)
     logging.info("#### Failed ####", failed)
