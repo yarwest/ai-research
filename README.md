@@ -88,6 +88,18 @@ When choosing image sizes, we advise the following:
 
 `$ python3 voice.py --prompt $'Hello, how are you? I am good, it is a nice day out. A little bit cold, yeah. It sucks, very, so ever correct, sir!\nAre you going to have some dinnner tonight? What will you eat?\nI hope you will enjoy your meal, just like I will.\nHave a good evening! See you later.' --voice "voice_file"`
 
+### Sources:
+
 2.1. Coqui TTS: https://github.com/coqui-ai/tts
 2.2. Formatting TTS Dataset: https://tts.readthedocs.io/en/latest/formatting_your_dataset.html
 2.3. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
+
+## Audio Transcription (Whisper AI)
+
+`$ python3 transcribe.py --path "path/to/input.wav"`
+
+On Windows, if you encounter `FileNotFoundError: [WinError 2] The system cannot find the file specified`, download ffmpeg.exe at: https://www.videohelp.com/software/ffmpeg
+
+### Sources:
+
+3.1. https://github.com/openai/whisper
