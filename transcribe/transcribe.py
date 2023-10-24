@@ -26,6 +26,11 @@ def parse_args():
 def getFilePath(fileName):
     return os.path.join(os.path.dirname(__file__), fileName)
 
+def new_dict(old_dict):
+    n = old_dict.copy()
+    [n.pop(key) for key in ['seek','tokens','temperature','avg_logprob','no_speech_prob','compression_ratio']]
+    return n
+
 def main(args):
     # Create output directory if not exists
     if not os.path.exists('./out'):
@@ -57,7 +62,7 @@ def main(args):
             print(result)
             for key in result:
                 print(f"{key}")
-            segments = map(lambda f: [f.pop(key) for key in ['seek','tokens','temperature','avg_logprob','no_speech_prob','compression_ratio']], result["segments"])
+            segments = map(new_dict,result["segments"])
             with open(f'./out/{processID}-{file}.txt', 'a+') as outfile:
                 outfile.write(json.dumps(list(segments), indent=4))
     except Exception as e:
