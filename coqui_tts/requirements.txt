@@ -1,2 +1,8 @@
 TTS
 # python-espeak-ng (uncomment for ubuntu)
+numpy
+tqdm==4.50.0
+scipy
+matplotlib
+pandas
+ipywidgets

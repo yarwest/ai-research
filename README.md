@@ -88,17 +88,28 @@ When choosing image sizes, we advise the following:
 
 `$ python3 voice.py --prompt $'Hello, how are you? I am good, it is a nice day out. A little bit cold, yeah. It sucks, very, so ever correct, sir!\nAre you going to have some dinnner tonight? What will you eat?\nI hope you will enjoy your meal, just like I will.\nHave a good evening! See you later.' --voice "voice_file"`
 
+### Analyze dataset
+
+`$ python3 analyzeDataset.py --dataset_dir "data/yarnoDataset"`
+
 ### Sources:
 
 2.1. Coqui TTS: https://github.com/coqui-ai/tts
 2.2. Formatting TTS Dataset: https://tts.readthedocs.io/en/latest/formatting_your_dataset.html
-2.3. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
+2.3. Analyze Dataset Notebook: https://github.com/coqui-ai/TTS/blob/dev/notebooks/dataset_analysis/AnalyzeDataset.ipynb
+2.4. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
 
 ## Audio Transcription (Whisper AI)
+
+By default, script reads from `data/` folder and performs transcription of every audio file it finds.
+The raw transcription is stored to prevent transcribing repeatedly. The transcribed segments are then used to slice the original audio file into smaller files, along with a `metadata.txt` which contains the transcription along with each file.
+Path parameter is optional.
 
 `$ python3 transcribe.py --path "path/to/input.wav"`
 
 On Windows, if you encounter `FileNotFoundError: [WinError 2] The system cannot find the file specified`, download ffmpeg.exe at: https://www.videohelp.com/software/ffmpeg
+
+The output folder created by this process can be copied to the `coqui_tts` implementation where the data set can be analyzed and loaded to train a TTS model.
 
 ### Sources:
 
