@@ -1,5 +1,11 @@
 # ai-research
-Research into video/image diffusion techniques
+Research into video/audio/image diffusion techniques
+
+## Current functionalities
+
+1. Coqui-TTS: text2voice implementation including voice cloning based on sample data. Currently working on training model on custom dataset. Includes dataset analysis script.
+2. HuggingFace Stable Diffusion: text2img, img2img, inpainting, image variation. Working on video2video as well as prompt automation.
+3. Whisper AI: audio transcription, created solution to generate labeled dataset for use in training TTS models.
 
 ## Getting started
 
@@ -75,11 +81,17 @@ When choosing image sizes, we advise the following:
 ### Sources:
 
 1.1. Stable Diffusion with 🧨 Diffusers - Published August 22, 2022: https://huggingface.co/blog/stable_diffusion
+
 1.2. Stable Diffusion 1 vs 2 - What you need to know - Published December 6, 2022: https://www.assemblyai.com/blog/stable-diffusion-1-vs-2-what-you-need-to-know/
+
 1.3. Text-to-Video: The Task, Challenges and the Current State - Published May 8, 2023: https://huggingface.co/blog/text-to-video
+
 1.4. Prompt guide: https://stable-diffusion-art.com/prompt-guide
+
 1.5. 10 prompts for realistic photography portraits: https://medium.com/mlearning-ai/10-ai-prompts-for-realistic-photography-portraits-da5edeacb031
+
 1.6. Inpainting, Preserving the Unmasked Area of the Image: https://huggingface.co/docs/diffusers/using-diffusers/inpaint#preserving-the-unmasked-area-of-the-image
+
 1.7. Evaluating diffusion models: https://huggingface.co/docs/diffusers/conceptual/evaluation
 
 ## Coqui TTS (coqui_tts)
@@ -90,13 +102,18 @@ When choosing image sizes, we advise the following:
 
 ### Analyze dataset
 
+See sources 2.3
+
 `$ python3 analyzeDataset.py --dataset_dir "data/yarnoDataset"`
 
 ### Sources:
 
 2.1. Coqui TTS: https://github.com/coqui-ai/tts
+
 2.2. Formatting TTS Dataset: https://tts.readthedocs.io/en/latest/formatting_your_dataset.html
+
 2.3. Analyze Dataset Notebook: https://github.com/coqui-ai/TTS/blob/dev/notebooks/dataset_analysis/AnalyzeDataset.ipynb
+
 2.4. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
 
 ## Audio Transcription (Whisper AI)
