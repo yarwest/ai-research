@@ -122,7 +122,7 @@ def main(args):
             # store segment data in metadata.txt
             with open(f"./{OUT_DIR}/{DATASET_DIR}/metadata.txt", 'a+') as outfile:
                 for segID in exportedSegments:
-                    outfile.write(f"{segID}.wav|{exportedSegments[segID]}|{exportedSegments[segID]}\n")
+                    outfile.write(f"{segID}|{exportedSegments[segID]}|{exportedSegments[segID]}\n")
     except Exception as e:
         logging.info(f"---- Failed to transcribe ----", e)
 

@@ -39,7 +39,7 @@ def formatter(root_path, meta_file, **kwargs):  # pylint: disable=unused-argumen
     """
     txt_file = os.path.join(root_path, meta_file)
     items = []
-    speaker_name = "Yarno Boelens"
+    speaker_name = "Yarno_Boelens"
     with open(txt_file, "r", encoding="utf-8") as ttf:
         for line in ttf:
             cols = line.split("|")

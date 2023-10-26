@@ -106,6 +106,14 @@ See sources 2.3
 
 `$ python3 analyzeDataset.py --dataset_dir "data/yarnoDataset"`
 
+### Train model on custom dataset
+
+`$ CUDA_VISIBLE_DEVICES=0 python3 train.py`
+
+### TTS using model trained on custom dataset
+
+`$ python3 voiceYarno.py --prompt "Hello everyone, I am Yarno. Today I will talk to you about generative AI and how Stable Diffusion technology can be used for social media content creation"`
+
 ### Sources:
 
 2.1. Coqui TTS: https://github.com/coqui-ai/tts
@@ -114,7 +122,9 @@ See sources 2.3
 
 2.3. Analyze Dataset Notebook: https://github.com/coqui-ai/TTS/blob/dev/notebooks/dataset_analysis/AnalyzeDataset.ipynb
 
-2.4. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
+2.4. Train YourTTS Notebook: https://github.com/coqui-ai/TTS/blob/dev/recipes/vctk/yourtts/train_yourtts.py
+
+2.5. Speech Synthesis papers: https://paperswithcode.com/task/speech-synthesis/
 
 ## Audio Transcription (Whisper AI)
 
