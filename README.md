@@ -141,3 +141,17 @@ The output folder created by this process can be copied to the `coqui_tts` imple
 ### Sources:
 
 3.1. https://github.com/openai/whisper
+
+## Image Object Detection (PyTorch)
+
+### Getting started
+
+Comment line 169 (`LayerId = cv2.dnn.DictValue`) in `pytorch_objectDetection/.venv/lib/python3.10/site-packages/cv2/typing/__init__.py`
+
+`$ python3 train.py`
+
+`$ python3 predict.py`
+
+### Sources:
+
+4.1. VOC Object Detection Dataset: https://pjreddie.com/projects/pascal-voc-dataset-mirror/

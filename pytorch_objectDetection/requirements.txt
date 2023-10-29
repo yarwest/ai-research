@@ -1,0 +1,11 @@
+pytorch-lightning
+numpy==1.23.0
+matplotlib==3.5.*
+pandas==1.3.*
+torchvision
+torchaudio
+torch
+albumentations==1.1.*
+tensorboard
+lxml
+opencv-python==4.5.1.*
