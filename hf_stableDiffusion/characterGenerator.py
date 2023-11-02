@@ -1,11 +1,22 @@
 import argparse
+import logging
+import sys
 from promptBuilder import getCharacters, getMediumPrompts
 from image import main as img
+
+# Logging
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: " "%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 def main():
     mediumPrompts = getMediumPrompts()
     for char in getCharacters():
         for medium, prompts in mediumPrompts.items():
+            logging.info(f"==== Generating {char} as {medium} ====")
             args = argparse.Namespace(
                 prompt=f"{char},{','.join(prompts)}",
                 batch_size=10,
@@ -18,8 +29,7 @@ def main():
                 base_img=None,
                 mask_img=None,
                 strict_mask=False,
-                variation=False,
-                
+                variation=False,      
             )
             img(args)
 

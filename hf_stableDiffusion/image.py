@@ -157,7 +157,7 @@ def main(args):
             image = Image.fromarray(unmasked_unchanged_image_arr.round().astype("uint8"))
 
         # save image with
-        image.save(f"./out/{processID}-{f'-{args.outputFile}' if args.outputFile else ''}{i}.png")
+        image.save(f"./out/{processID}-{f'-{args.output_file}' if args.output_file else ''}{i}.png")
 
     with open('output-log.txt', 'a+') as file:
         if(os.stat("output-log.txt").st_size == 0):
