@@ -14,7 +14,12 @@ def main():
                 img_w=512,
                 img_h=512,
                 num_inference_steps=10,
-                output_file=f"{char}-{medium}"
+                output_file=f"{char}-{medium}",
+                base_img=None,
+                mask_img=None,
+                strict_mask=False,
+                variation=False,
+                
             )
             img(args)
 
