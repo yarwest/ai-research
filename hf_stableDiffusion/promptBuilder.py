@@ -1,7 +1,5 @@
-import argparse
 import logging
 import sys
-from image import main as img
 
 __author__ = "Yarno Boelens"
 
@@ -206,21 +204,3 @@ def getMediumPrompts():
             "craig mullins style",
         ]
     }
-
-def main():
-    mediumPrompts = getMediumPrompts()
-    for char in getCharacters():
-        for medium, prompts in mediumPrompts.items():
-            img({
-                "prompt": f"{char},{','.join(prompts)}",
-                "batch_size":10,
-                "seed": 152,
-                "count": 1,
-                "img_w": 512,
-                "img_h": 512,
-                "num_inference_steps": 10,
-                "outputFile": f"{char}-{medium}",
-            })
-
-if __name__ == "__main__":
-    main()
