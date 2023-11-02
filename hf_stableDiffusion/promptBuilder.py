@@ -116,7 +116,10 @@ def getCharacters():
         "neo, matrix",
         "sherlock holmes",
         "minions",
-        "skyrim dragonborn"
+        "skyrim dragonborn",
+        "popeye",
+        "captain jack sparrow, pirate",
+        "power rangers"
     ]
 
 def getMediumPrompts():

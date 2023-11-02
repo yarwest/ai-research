@@ -1,5 +1,6 @@
 import argparse
 import logging
+import random
 import sys
 from promptBuilder import getCharacters, getMediumPrompts
 from image import main as img
@@ -14,13 +15,15 @@ logging.basicConfig(
 
 def main():
     mediumPrompts = getMediumPrompts()
-    for char in getCharacters():
+    characters = getCharacters()
+    random.shuffle(characters)
+    for char in characters:
         for medium, prompts in mediumPrompts.items():
             logging.info(f"==== Generating {char} as {medium} ====")
             args = argparse.Namespace(
                 prompt=f"{char},{','.join(prompts)}",
-                batch_size=10,
-                seed=152,
+                batch_size=5,
+                seed=1520,
                 count=1,
                 img_w=512,
                 img_h=512,
@@ -29,7 +32,7 @@ def main():
                 base_img=None,
                 mask_img=None,
                 strict_mask=False,
-                variation=False,      
+                variation=False,
             )
             img(args)
 

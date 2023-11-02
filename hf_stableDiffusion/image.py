@@ -135,6 +135,7 @@ def main(args):
     logging.info("==== Pipeline completed, storing images ====")
     images = pipe.images
 
+    fileName = 'text2img'
     if(args.base_img):
         if(args.mask_img):
             fileName = 'inpainting'
