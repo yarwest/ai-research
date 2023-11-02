@@ -18,7 +18,7 @@ logging.basicConfig(
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prompt", help="Prompt for video generation", type=str, required=True)
+    parser.add_argument("--prompt", help="Prompt for audio generation", type=str, required=True)
     parser.add_argument("--voice", default="indian_voice", help="Name of voice sample file (.wav in data folder) to be cloned for tts", type=str, required=False)
 
     return parser.parse_args()

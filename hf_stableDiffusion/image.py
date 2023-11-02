@@ -40,6 +40,7 @@ def parse_args():
     parser.add_argument("--num_inference_steps", help="The number of inference steps. If you want faster results you can use a smaller number. If you want potentially higher quality results, you can use larger numbers.", type=int, required=False, default=50)
     parser.add_argument("--img_w", help="Height of generated image", type=int, required=False, default=512)
     parser.add_argument("--img_h", help="Width of generated image", type=int, required=False, default=512)
+    parser.add_argument("--output_file", help="String to include in outputfile name", type=str, required=False)
 
     return parser.parse_args()
 
@@ -156,7 +157,7 @@ def main(args):
             image = Image.fromarray(unmasked_unchanged_image_arr.round().astype("uint8"))
 
         # save image with
-        image.save(f"./out/{processID}-{i}.png")
+        image.save(f"./out/{processID}-{f'-{args.outputFile}' if args.outputFile else ''}{i}.png")
 
     with open('output-log.txt', 'a+') as file:
         if(os.stat("output-log.txt").st_size == 0):

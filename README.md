@@ -94,6 +94,8 @@ When choosing image sizes, we advise the following:
 
 1.7. Evaluating diffusion models: https://huggingface.co/docs/diffusers/conceptual/evaluation
 
+1.8. https://publicprompts.art/
+
 ## Coqui TTS (coqui_tts)
 
 ### Voice cloning
