@@ -2,7 +2,7 @@ import argparse
 import logging
 import random
 import sys
-from promptBuilder import getCharacters, getMediumPrompts
+from promptBuilder import getCharacters, getMediumPrompts, getNegativeMedPrompts
 from image import main as img
 
 # Logging
@@ -21,16 +21,16 @@ def parse_args():
 
 def main(args):
     mediumPrompts = getMediumPrompts()
-    characters = [ args.character if args.character else getCharacters() ]
-    negativePrompts = getMediumPrompts()
+    characters = [ args.character] if args.character else getCharacters()
+    negativePrompts = getNegativeMedPrompts()
     random.shuffle(characters)
     for char in characters:
         if args.medium:
             medium = args.medium
         else:
             medium = random.choice(list(mediumPrompts.keys()))
-        prompts = mediumPrompts[medium]
-        negativePrompts= negativePrompts[medium]
+        prompts = mediumPrompts.get(medium)
+        negativePrompts= negativePrompts.get(medium)
         logging.info(f"==== Generating {char} as {medium} ====")
         img_args = argparse.Namespace(
             prompt=f"{char},{','.join(prompts)}",
@@ -40,7 +40,7 @@ def main(args):
             count=1,
             img_w=512,
             img_h=512,
-            num_inference_steps=10,
+            num_inference_steps=15,
             output_file=f"{char}-{medium}",
             base_img=None,
             mask_img=None,

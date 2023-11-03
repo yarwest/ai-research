@@ -11,7 +11,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-def getNegativePrompts():
+def getNegativeMedPrompts():
     return {
         'lineart': [
             "ugly",
@@ -29,6 +29,8 @@ def getNegativePrompts():
             "disfigured",
             "deformed",
             "bad art",
+            "bad drawing",
+            "broken lines",
             
         ]
     }
