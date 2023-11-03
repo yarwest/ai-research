@@ -3,7 +3,7 @@ import logging
 import sys
 import os
 import torch
-import numpy as np 
+import numpy as np
 import uuid
 from PIL import Image
 
@@ -29,6 +29,7 @@ logging.basicConfig(
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--prompt", help="Prompt for image generation", type=str, required=False, default="")
+    parser.add_argument("--negative_prompt", help="Negative prompt for image generation", type=str, required=False, default="")
     parser.add_argument("--base_img", help="Relative path to base image used for img2img diffusion", type=str, required=False)
     parser.add_argument("--mask_img", help="Relative path to mask image used for inpainting. White pixels in the mask are repainted while black pixels are preserved", type=str, required=False)
     parser.add_argument("--strict_mask", help="Pass True to use strict masking during inpainting, to ensure preservation of the black pixels from the mask image", type=bool, required=False, default=False)
@@ -53,7 +54,10 @@ def main(args):
 
     prompt = [args.prompt] * args.count
 
-    negativePrompt = [getNegativePrompts()] * args.count
+    if args.negative_prompt:
+        negativePrompt = [args.negative_prompt] * args.count
+    else:
+        negativePrompt = [getNegativePrompts()] * args.count
 
     logging.info("==== Initialising HuggingFace Stable Diffusion pipelines ====")
     # init pipelines & components

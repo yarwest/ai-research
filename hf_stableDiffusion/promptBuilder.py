@@ -100,7 +100,7 @@ def getCharacters():
         "deadpool",
         "yoda",
         "darth vader",
-        "jedi",
+        "jedi, star wars",
         "geralt of rivia",
         "freddy krueger",
         "sonic",
@@ -124,15 +124,25 @@ def getCharacters():
 
 def getMediumPrompts():
     return {
+        "lineart": [
+            "highly detailed intricate line drawing",
+            "clean simple line art",
+            "black and white pencil drawing",
+            "handdrawn cartoon on paper",
+            "black and white coloring book page",
+            "coloring book line art by artgerm and greg rutkowski and johanna basford and alphonse mucha",
+        ],
         "painting": [
             "renaissance-style portrait",
             "Highly Detailed Digital Painting",
             "oil painting on canvas",
             "thick paint",
-            "rembrandt van rijn",
+            "style of rembrandt van rijn",
             "golden age",
-            "johannes vermeer",
-            "frans hals",
+            "style of johannes vermeer",
+            "style of frans hals",
+            
+            "highly detailed", # !!
         ],
         "fantasy": [
             "sci-fi",
@@ -140,30 +150,39 @@ def getMediumPrompts():
             "dystopian",
             "futuristic",
             "neon lighting",
-            "greg rutkowski",
-            "zabrocki",
-            "karlkka",
-            "jayison devadas",
+            "style of greg rutkowski",
+            "style of zabrocki",
+            "style of karlkka",
+            "style of jayison devadas",
             "trending on artstation",
-            "8k",
+
             "ultra wide angle",
+            "photorealistic",
+            "high resolution", # !!
+            "highly detailed", # !!
+            "intricate design", # !!
+            "8k",
+            "ray tracing",
         ],
         "comic": [
             "comic book cover",
             "retro comic",
             "illustration",
             "handdrawn",
+            "pencil on paper",
             "vintage",
             "symmetrical"
             "vibrant",
-            "poster by ilya kuvshinov katsuhiro",
-            "magali villeneuve",
-            "artgerm",
-            "jeremy lipking",
-            "michael garmash",
-            "rob rey",
+            "style of  ilya kuvshinov katsuhiro",
+            "style of magali villeneuve",
+            "style of artgerm",
+            "style of jeremy lipking",
+            "style of michael garmash",
+            "style of rob rey",
             "kentaro miura style",
-            "trending on art station"
+            "trending on art station",
+
+            "highly detailed", # !!
         ],
         "portrait": [
             "portrait",
@@ -177,14 +196,15 @@ def getMediumPrompts():
             "low angle photograph",
             "upper body framing",
             "cgsociety",
+            "8k",
+            "ray tracing",
+            "filmed on Sony A7iii, 50mm, f/2.8",
+            "film director James Cameron",
+            
             "photorealistic",
             "high resolution", # !!
             "highly detailed", # !!
             "intricate design", # !!
-            "8k",
-            "ray tracing",
-            "filmed on Sony A7iii, 50mm, f/2.8",
-            "film director James Cameron"
         ],
         "icon": [
             "appicon style",

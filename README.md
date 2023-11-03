@@ -152,7 +152,7 @@ Comment line 169 (`LayerId = cv2.dnn.DictValue`) in `pytorch_objectDetection/.ve
 
 `$ python3 train.py`
 
-`$ python3 predict.py`
+`$ python3 predict.py -m version_1/checkpoints/epoch=7-step=568.ckpt -i AIstore.png`
 
 ### Sources:
 

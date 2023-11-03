@@ -1,6 +1,7 @@
 import argparse
-
+import os
 import cv2
+import uuid
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 
@@ -9,8 +10,10 @@ from neuralnet.model import FasterRcnnModel
 
 __author__ = "Yarno Boelens"
 
-DEFAULT_THRESHOLD = 0.7
+DEFAULT_THRESHOLD = 0.8
 
+def getDatasetPath(fileName):
+    return os.path.join(os.path.dirname(__file__), f"{fileName}")
 
 def print_annotated_image(
     image, boxes, scores, labels, threshold=DEFAULT_THRESHOLD, output_path=None
@@ -50,7 +53,7 @@ def print_annotated_image(
     if output_path is not None:
         cv2.imwrite(output_path, image)
 
-    _show_cv2_img("Predicted image", image)
+    # _show_cv2_img("Predicted image", image)
 
 
 def _show_cv2_img(window_title, image):
@@ -63,11 +66,14 @@ def _show_cv2_img(window_title, image):
             cv2.destroyAllWindows()
             break
 
+INT_TO_CLS = {
+    1: "person"
+}
 
 def predict(model_path, image_path, threshold=DEFAULT_THRESHOLD, output_path=None):
-    model = FasterRcnnModel.load_from_checkpoint(model_path)
+    model = FasterRcnnModel.load_from_checkpoint(getDatasetPath(f"models/lightning_logs/{model_path}"))
 
-    image = cv2.imread(image_path)
+    image = cv2.imread(getDatasetPath(f"data/{image_path}"))
     converted_image = _convert_image(image)
 
     predictions = model([converted_image])
@@ -75,7 +81,7 @@ def predict(model_path, image_path, threshold=DEFAULT_THRESHOLD, output_path=Non
     boxes = predictions[0]["boxes"].tolist()
     scores = predictions[0]["scores"].tolist()
     labels = [
-        # LisaTrafficLightDataset.INT_TO_CLS[label]
+        INT_TO_CLS[label]
         for label in predictions[0]["labels"].tolist()
     ]
 
@@ -99,7 +105,11 @@ def _convert_image(image):
 
 
 def main(args):
-    predict(args.model, args.image, args.threshold, args.output)
+    processID = uuid.uuid4()
+    # Create output directory if not exists
+    if not os.path.exists('./out'):
+        os.makedirs('out/')
+    predict(args.model, args.image, args.threshold, getDatasetPath(f"out/{processID}.png"))
 
 def parse_args():
     parser = argparse.ArgumentParser(prog="predict.py", description="""
@@ -110,7 +120,6 @@ def parse_args():
     parser.add_argument("-m", "--model", type=str, help="A path to the PyTorch Lightning checkpoint file with the model parameters.", required=True)
     parser.add_argument("-i", "--image", type=str, help="A path to an image file for prediction.")
     parser.add_argument("-t", "--threshold", type=float, default=DEFAULT_THRESHOLD, help="An annotation will be drawn only if its score is higher than this value.")
-    parser.add_argument("-o","--output",type=str, help="A path where to save an annotated image.")
 
     return parser.parse_args()
 
