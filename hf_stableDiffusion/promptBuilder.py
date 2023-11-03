@@ -12,6 +12,28 @@ logging.basicConfig(
 )
 
 def getNegativePrompts():
+    return {
+        'lineart': [
+            "ugly",
+            "tiling",
+            "poorly drawn hands",
+            "poorly drawn feet",
+            "poorly drawn face",
+            "poorly drawn eyes",
+            "poorly drawn teeth",
+            "out of frame",
+            "extra limbs",
+            "extra legs",
+            "extra arms",
+            "extra fingers",
+            "disfigured",
+            "deformed",
+            "bad art",
+            
+        ]
+    }
+
+def getNegativePrompts():
     return ",".join([
         "ugly",
         "tiling",

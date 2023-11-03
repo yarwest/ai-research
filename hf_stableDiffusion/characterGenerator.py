@@ -15,12 +15,14 @@ logging.basicConfig(
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--character", help="Character prompt", type=str, required=False, default="")
     parser.add_argument("--medium", help="Medium prompt collection", type=str, required=False, default="")
     return parser.parse_args()
 
 def main(args):
     mediumPrompts = getMediumPrompts()
-    characters = getCharacters()
+    characters = [ args.character if args.character else getCharacters() ]
+    negativePrompts = getMediumPrompts()
     random.shuffle(characters)
     for char in characters:
         if args.medium:
@@ -28,7 +30,7 @@ def main(args):
         else:
             medium = random.choice(list(mediumPrompts.keys()))
         prompts = mediumPrompts[medium]
-        negativePrompts= []
+        negativePrompts= negativePrompts[medium]
         logging.info(f"==== Generating {char} as {medium} ====")
         img_args = argparse.Namespace(
             prompt=f"{char},{','.join(prompts)}",
