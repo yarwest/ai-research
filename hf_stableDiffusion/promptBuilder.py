@@ -15,23 +15,25 @@ def getNegativeMedPrompts():
     return {
         'lineart': [
             "ugly",
+            "framed",
+            "tangle",
+            "spaghetti",
             "tiling",
-            "poorly drawn hands",
-            "poorly drawn feet",
-            "poorly drawn face",
-            "poorly drawn eyes",
-            "poorly drawn teeth",
-            "out of frame",
-            "extra limbs",
-            "extra legs",
-            "extra arms",
-            "extra fingers",
-            "disfigured",
-            "deformed",
+            # "poorly drawn hands",
+            # "poorly drawn feet",
+            # "poorly drawn face",
+            # "poorly drawn eyes",
+            # "poorly drawn teeth",
+            # "out of frame",
+            # "extra limbs",
+            # "extra legs",
+            # "extra arms",
+            # "extra fingers",
+            # "disfigured",
+            # "deformed",
             "bad art",
             "bad drawing",
             "broken lines",
-            
         ]
     }
 
@@ -149,6 +151,7 @@ def getCharacters():
 def getMediumPrompts():
     return {
         "lineart": [
+            "portrait with plain and empty background",
             "highly detailed intricate line drawing",
             "clean simple line art",
             "black and white pencil drawing",

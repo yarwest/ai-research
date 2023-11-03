@@ -30,11 +30,11 @@ def main(args):
         else:
             medium = random.choice(list(mediumPrompts.keys()))
         prompts = mediumPrompts.get(medium)
-        negativePrompts= negativePrompts.get(medium)
+        negativePrompt= negativePrompts.get(medium)
         logging.info(f"==== Generating {char} as {medium} ====")
         img_args = argparse.Namespace(
             prompt=f"{char},{','.join(prompts)}",
-            negative_prompt=','.join(negativePrompts),
+            negative_prompt=','.join(negativePrompt),
             batch_size=5,
             seed=1520,
             count=1,

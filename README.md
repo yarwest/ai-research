@@ -96,6 +96,10 @@ When choosing image sizes, we advise the following:
 
 1.8. https://publicprompts.art/
 
+1.9. Prompts Dataset: https://huggingface.co/datasets/Gustavosta/Stable-Diffusion-Prompts
+
+1.10. Bad hands text embedding: https://huggingface.co/yesyeahvh/bad-hands-5
+
 ## Coqui TTS (coqui_tts)
 
 ### Voice cloning
