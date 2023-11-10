@@ -2,8 +2,10 @@ import argparse
 import os
 import cv2
 import uuid
+import math
 import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
+import numpy as np
 
 from data.voc_dataset import VOCDataModule
 from neuralnet.model import FasterRcnnModel
@@ -58,7 +60,7 @@ def print_annotated_image(
     # _show_cv2_img("Predicted image", image)
 
 def printImg(image, path):
-    cv2.imwrite(output_path, image)
+    cv2.imwrite(path, image)
 
 def extractForeground(image):
     # create a simple mask image similar 
@@ -133,6 +135,9 @@ def predict(model_path, image_path, threshold=DEFAULT_THRESHOLD, output_path=Non
         INT_TO_CLS[label]
         for label in predictions[0]["labels"].tolist()
     ]
+
+    if(scores[0] < threshold):
+        threshold = math.floor(scores[0] * 100)/100.0
 
     print("Predictions:")
     for box, score, label in zip(boxes, scores, labels):

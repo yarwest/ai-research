@@ -100,6 +100,8 @@ When choosing image sizes, we advise the following:
 
 1.10. Bad hands text embedding: https://huggingface.co/yesyeahvh/bad-hands-5
 
+1.11. LoRA: https://www.ml6.eu/blogpost/low-rank-adaptation-a-technical-deep-dive
+
 ## Coqui TTS (coqui_tts)
 
 ### Voice cloning
@@ -148,6 +150,8 @@ The output folder created by this process can be copied to the `coqui_tts` imple
 
 3.1. https://github.com/openai/whisper
 
+3.2. Speaker Diarization: https://colab.research.google.com/drive/11ccdRYZSHBbUYI9grn6S1O67FVyvCKyL#scrollTo=ap_Oozugv3t7
+
 ## Image Object Detection (PyTorch)
 
 ### Getting started
@@ -156,7 +160,7 @@ Comment line 169 (`LayerId = cv2.dnn.DictValue`) in `pytorch_objectDetection/.ve
 
 `$ python3 train.py`
 
-`$ python3 predict.py -m version_1/checkpoints/epoch=7-step=568.ckpt -i AIstore.png`
+`$ python3 predict.py -m version_49/checkpoints/epoch=0-step=715.ckpt -i "AIsia store.png"`
 
 ### Sources:
 
