@@ -1,3 +1,7 @@
 ffmpeg-python
 openai-whisper
 pydub
+pyannote-audio
+wave
+numpy
+scikit-learn

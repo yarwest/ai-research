@@ -140,7 +140,13 @@ By default, script reads from `data/` folder and performs transcription of every
 The raw transcription is stored to prevent transcribing repeatedly. The transcribed segments are then used to slice the original audio file into smaller files, along with a `metadata.txt` which contains the transcription along with each file.
 Path parameter is optional.
 
+### Transcribe
+
 `$ python3 transcribe.py --path "path/to/input.wav"`
+
+### Transcribe with speaker detection
+
+`$ python3 transcribe.py --path "path/to/input.wav" --speakers 2`
 
 On Windows, if you encounter `FileNotFoundError: [WinError 2] The system cannot find the file specified`, download ffmpeg.exe at: https://www.videohelp.com/software/ffmpeg
 

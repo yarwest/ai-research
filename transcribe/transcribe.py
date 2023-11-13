@@ -3,9 +3,29 @@ import logging
 import sys
 import json
 import os
+import datetime
 import whisper
 import uuid
+import torch
+import contextlib
+import wave
 from pydub import AudioSegment
+import numpy as np
+import subprocess
+
+import pyannote.audio
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+from pyannote.audio.pipelines.speaker_verification import PretrainedSpeakerEmbedding
+embedding_model = PretrainedSpeakerEmbedding(
+    "speechbrain/spkrec-ecapa-voxceleb",
+    device=torch.device(device))
+
+from pyannote.audio import Audio
+from pyannote.core import Segment
+
+from sklearn.cluster import AgglomerativeClustering
 
 __author__ = "Yarno Boelens"
 
@@ -20,6 +40,8 @@ logging.basicConfig(
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", help="Path to audio file to be transcribed", type=str, required=False)
+    parser.add_argument("--speakers", help="Number of unique speakers in audio file", type=int, default=1, required=False)
+    parser.add_argument("--split", help="Pass True to split original audio file in to seperate files for each segment", type=bool, required=False)
 
     return parser.parse_args()
 
@@ -88,7 +110,70 @@ def sliceSegments(segments, baseAudio):
             previousSegments.append(text)
 
     return exportedSegments
-    
+
+def toWav(path):
+    logging.info('---- Converting file to WAV ----')
+    file = path.split('.')[0]
+    subprocess.call(['ffmpeg', '-i', path, f'{file}.wav', '-y'])
+
+def segment_embedding(segment, duration, path):
+  audio = Audio()
+  start = segment["start"]
+  # Whisper overshoots the end timestamp in the last segment
+  end = min(duration, segment["end"])
+  clip = Segment(start, end)
+  waveform, sample_rate = audio.crop(path, clip)
+  return embedding_model(waveform[None])
+
+def time(secs):
+  return datetime.timedelta(seconds=round(secs))
+
+def processFile(file, args):
+    filePath = getFilePath(f"{DATA_DIR}/{file}")
+    if not os.path.isfile(filePath):
+        return
+    if file[-3:] != 'wav':
+        toWav(file)
+    model = whisper.load_model("base")
+    logging.info('---- Transcribing audio ----')
+    segments = transcribe(file, filePath, model)
+
+    if(args.split):
+        baseAudio = AudioSegment.from_wav(filePath)
+        logging.info('---- Slicing audio ----')
+        exportedSegments = sliceSegments(segments, baseAudio)
+
+        # store segment data in metadata.txt
+        with contextlib.closing(open(f"./{OUT_DIR}/{DATASET_DIR}/metadata.txt", 'a+')) as outfile:
+            for segID in exportedSegments:
+                outfile.write(f"{segID}|{exportedSegments[segID]}|{exportedSegments[segID]}\n")
+
+    if(args.speakers > 1):
+        logging.info('---- Speaker detection ----')
+        with contextlib.closing(wave.open(filePath,'r')) as f:
+            frames = f.getnframes()
+            rate = f.getframerate()
+            duration = frames / float(rate)
+
+        embeddings = np.zeros(shape=(len(segments), 192))
+        for i, segment in enumerate(segments):
+            embeddings[i] = segment_embedding(segment, duration, filePath)
+
+        embeddings = np.nan_to_num(embeddings)
+
+        clustering = AgglomerativeClustering(args.speakers).fit(embeddings)
+        labels = clustering.labels_
+        for i in range(len(segments)):
+            segments[i]["speaker"] = 'SPEAKER ' + str(labels[i] + 1)
+
+        logging.info('---- Saving speaker detection transcript ----')
+        f = open(f"./{OUT_DIR}/{file}-transcript.txt", "w", encoding="utf-8")
+
+        for (i, segment) in enumerate(segments):
+            if i == 0 or segments[i - 1]["speaker"] != segment["speaker"]:
+                f.write("\n" + segment["speaker"] + ' ' + str(time(segment["start"])) + '\n')
+            f.write(segment["text"][1:] + ' ')
+        f.close()
 
 DATA_DIR = 'data'
 OUT_DIR = 'out'
@@ -103,26 +188,14 @@ def main(args):
     logging.info('---- Initialising Whisper AI ----')
 
     try:
-        model = whisper.load_model("base")
-        logging.info('---- Starting loop of data dir ----')
-        # Loop through data filder
-        for file in os.listdir(getFilePath(f"{DATA_DIR}/")):
-            filePath = getFilePath(f"{DATA_DIR}/{file}")
-            if not os.path.isfile(filePath):
-                continue
+        if(args.path):
+            processFile(args.path, args)
+        else:
+            # Loop through data folder
+            logging.info('---- Starting loop of data dir ----')
+            for file in os.listdir(getFilePath(f"{DATA_DIR}/")):
+                processFile(file, args)
 
-            logging.info('---- Transcribing audio ----')
-            segments = transcribe(file, filePath, model)
-            
-            baseAudio = AudioSegment.from_wav(filePath)
-            
-            logging.info('---- Slicing audio ----')
-            exportedSegments = sliceSegments(segments, baseAudio)
-
-            # store segment data in metadata.txt
-            with open(f"./{OUT_DIR}/{DATASET_DIR}/metadata.txt", 'a+') as outfile:
-                for segID in exportedSegments:
-                    outfile.write(f"{segID}|{exportedSegments[segID]}|{exportedSegments[segID]}\n")
     except Exception as e:
         logging.info(f"---- Failed to transcribe ----", e)
 
