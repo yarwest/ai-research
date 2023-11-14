@@ -18,7 +18,7 @@ def getDatasetPath(fileName):
     return os.path.join(os.path.dirname(__file__), f"{fileName}")
 
 def print_annotated_image(
-    image, boxes, scores, labels, threshold=DEFAULT_THRESHOLD, output_path=None
+    image, boxes, scores, labels, threshold, output_path=None
 ):
     box_thickness = 2
     color = (0, 0, 255)  # Red
@@ -55,56 +55,70 @@ def print_annotated_image(
     if output_path is not None:
         printImg(image, output_path)
 
-    extractForeground(image)
-
     # _show_cv2_img("Predicted image", image)
 
 def printImg(image, path):
     cv2.imwrite(path, image)
 
-def extractForeground(image):
-    # create a simple mask image similar 
-    # to the loaded image, with the  
-    # shape and return type 
-    mask = np.zeros(image.shape[:2], np.uint8) 
-   
-    # specify the background and foreground model 
-    # using numpy the array is constructed of 1 row 
-    # and 65 columns, and all array elements are 0 
-    # Data type for the array is np.float64 (default) 
-    backgroundModel = np.zeros((1, 65), np.float64) 
-    foregroundModel = np.zeros((1, 65), np.float64) 
-   
-    # define the Region of Interest (ROI) 
-    # as the coordinates of the rectangle 
-    # where the values are entered as 
-    # (startingPoint_x, startingPoint_y, width, height) 
-    rectangle = (20, 100, 150, 150) 
-   
-    # apply the grabcut algorithm with appropriate 
-    # values as parameters, number of iterations = 3  
-    # cv2.GC_INIT_WITH_RECT is used because 
-    # of the rectangle mode is used  
-    cv2.grabCut(image, mask, rectangle,   
-            backgroundModel, foregroundModel, 
-            3, cv2.GC_INIT_WITH_RECT) 
-   
-    # In the new mask image, pixels will  
-    # be marked with four flags  
-    # four flags denote the background / foreground  
-    # mask is changed, all the 0 and 2 pixels  
-    # are converted to the background 
-    # mask is changed, all the 1 and 3 pixels 
-# are now the part of the foreground 
-    # the return type is also mentioned, 
-    # this gives us the final mask 
-    mask2 = np.where((mask == 2)|(mask == 0), 0, 1).astype('uint8') 
-   
-    # The final mask is multiplied with  
-    # the input image to give the segmented image. 
-    image = image * mask2[:, :, np.newaxis]
-    printImg(image, getDatasetPath(f"out/123-foreground.png"))
-    
+def extractForeground(image, boxes, scores, labels, threshold):
+    for idx, (box, score, label) in enumerate(zip(boxes, scores, labels)):
+        if score <= threshold:
+            continue
+        # create a simple mask image similar 
+        # to the loaded image, with the  
+        # shape and return type 
+        mask = np.zeros(image.shape[:2], np.uint8)
+
+        # specify the background and foreground model 
+        # using numpy the array is constructed of 1 row 
+        # and 65 columns, and all array elements are 0 
+        # Data type for the array is np.float64 (default) 
+        backgroundModel = np.zeros((1, 65), np.float64) 
+        foregroundModel = np.zeros((1, 65), np.float64) 
+
+        # define the Region of Interest (ROI) 
+        # as the coordinates of the rectangle 
+        # where the values are entered as 
+        # (startingPoint_x, startingPoint_y, width, height) 
+        int_box = [int(coordinate) for coordinate in box]
+        startingY = int_box[1]
+        startingX = int_box[0]
+        endingY = int_box[3]
+        endingX = int_box[2]
+
+        width = endingX - startingX
+        height = endingY - startingY
+
+        if(startingX > 1):
+            startingX -= 1
+        if(startingY > 1):
+            startingY -= 1
+
+        rectangle = (startingX, startingY, width, height)
+
+        # apply the grabcut algorithm with appropriate 
+        # values as parameters, number of iterations = 3  
+        # cv2.GC_INIT_WITH_RECT is used because 
+        # of the rectangle mode is used  
+        cv2.grabCut(image, mask, rectangle,   
+                backgroundModel, foregroundModel, 
+                3, cv2.GC_INIT_WITH_RECT) 
+
+        # In the new mask image, pixels will  
+        # be marked with four flags  
+        # four flags denote the background / foreground  
+        # mask is changed, all the 0 and 2 pixels  
+        # are converted to the background 
+        # mask is changed, all the 1 and 3 pixels 
+        # are now the part of the foreground 
+        # the return type is also mentioned, 
+        # this gives us the final mask 
+        mask2 = np.where((mask == 2)|(mask == 0), 0, 1).astype('uint8') 
+
+        # The final mask is multiplied with  
+        # the input image to give the segmented image. 
+        image = image * mask2[:, :, np.newaxis]
+        printImg(image, getDatasetPath(f"out/{label}-{idx}-{score}.png"))
       
 
 def _show_cv2_img(window_title, image):
@@ -137,11 +151,23 @@ def predict(model_path, image_path, threshold=DEFAULT_THRESHOLD, output_path=Non
     ]
 
     if(scores[0] < threshold):
-        threshold = math.floor(scores[0] * 100)/100.0
+        if scores.__len__() > 4:
+            threshold = math.floor(scores[5] * 100)/100.0    
+        else:
+            threshold = math.floor(scores[0] * 100)/100.0
 
     print("Predictions:")
     for box, score, label in zip(boxes, scores, labels):
         print(f"Name: {label}\t| Score: {score}\t| Box: ({box})")
+
+    # # We delete scores below the threshold here to not needlessly pass around unused predictions
+    # for idx, score in enumerate(scores):
+    #     if score <= threshold:
+    #         del boxes[idx]
+    #         del scores[idx]
+    #         del labels[idx]
+
+    extractForeground(image, boxes, scores, labels, threshold)
 
     print_annotated_image(image, boxes, scores, labels, threshold, output_path)
 
@@ -160,6 +186,7 @@ def _convert_image(image):
 
 def main(args):
     processID = uuid.uuid4()
+    print("---- Process ID:", processID)
     # Create output directory if not exists
     if not os.path.exists('./out'):
         os.makedirs('out/')

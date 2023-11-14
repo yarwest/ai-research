@@ -173,7 +173,9 @@ Using pyannote.audio speaker diarization technique to create speaker embedings
 
 3.1. https://github.com/openai/whisper
 
-3.2. Speaker Diarization implementation (MONO CHANNEL!): https://colab.research.google.com/drive/11ccdRYZSHBbUYI9grn6S1O67FVyvCKyL#scrollTo=ap_Oozugv3t7
+https://github.com/openai/whisper/discussions/264
+
+3.2. Speaker Diarization implementation (MONO CHANNEL!): https://colab.research.google.com/drive/11ccdRYZSHBbUYI9grn6S1O67FVyvCKyL
 
 3.3. Speaker Diarization resources: https://huggingface.co/spaces/openai/whisper/discussions/4
 
@@ -192,3 +194,5 @@ Comment line 169 (`LayerId = cv2.dnn.DictValue`) in `pytorch_objectDetection/.ve
 ### Sources:
 
 4.1. VOC Object Detection Dataset: https://pjreddie.com/projects/pascal-voc-dataset-mirror/
+
+4.2. Foreground extraction using grabcut: https://www.geeksforgeeks.org/python-foreground-extraction-in-an-image-using-grabcut-algorithm/

@@ -51,6 +51,7 @@ def main(args):
         os.makedirs('out/')
 
     processID = uuid.uuid4()
+    print("---- Process ID:", processID)
 
     prompt = [args.prompt] * args.count
 
