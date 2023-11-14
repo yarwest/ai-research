@@ -5,3 +5,4 @@ pyannote-audio
 wave
 numpy
 scikit-learn
+matplotlib

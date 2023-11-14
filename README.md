@@ -5,7 +5,8 @@ Research into video/audio/image diffusion techniques
 
 1. Coqui-TTS: text2voice implementation including voice cloning based on sample data. Currently working on training model on custom dataset. Includes dataset analysis script.
 2. HuggingFace Stable Diffusion: text2img, img2img, inpainting, image variation. Working on video2video as well as prompt automation.
-3. Whisper AI: audio transcription, created solution to generate labeled dataset for use in training TTS models.
+3. Whisper AI: audio transcription, created solution to generate labeled dataset for use in training TTS models. Speaker diarization to cluster detected segments by number of speakers.
+4. PyTorch Object Detection: training of object detection model as well as performing object detection on images.
 
 ## Getting started
 
@@ -31,15 +32,21 @@ After succesfully fulfilling the dependencies, the model inference can simply be
 
 ### text2img
 
+Generate an image based on a text prompt.
+
 `$ python3 image.py --prompt "alien" --img_h 768 --num_inference_steps 25 --seed 1024`
 
 ### img2img
+
+Transform an existing image based on a text prompt.
 
 `$ python3 image.py --prompt "4k, dslr, sharp focus, high resolution, realistic, beautiful" --base_img "out\edits\asia grocery store.png" --img_h 768 --num_inference_steps 10 --seed 1024`
 
 Required params: base_img
 
 ### inpainting
+
+White pixels in the mask are repainted based on the prompt, while black pixels are preserved.
 
 Required params: base_img, mask_img
 
@@ -144,19 +151,33 @@ Path parameter is optional.
 
 `$ python3 transcribe.py --path "path/to/input.wav"`
 
-### Transcribe with speaker detection
-
-`$ python3 transcribe.py --path "path/to/input.wav" --speakers 2`
-
 On Windows, if you encounter `FileNotFoundError: [WinError 2] The system cannot find the file specified`, download ffmpeg.exe at: https://www.videohelp.com/software/ffmpeg
 
+### Split audio
+
+Provide the `--split True` flag to slice the audio file into multiple seperate .wav files.
+Created for the purpose of creating labeled TTS data. Transcriber returns seperate segments, which are bundled into sentences (see `sliceSegments` & `isCompleteScentence` in `transcribe.py`) and exported to a directory in the output folder.
+
+`$ python3 transcribe.py --path "path/to/input.wav" --split True`
+
 The output folder created by this process can be copied to the `coqui_tts` implementation where the data set can be analyzed and loaded to train a TTS model.
+This output folder also includes a `metadata.txt` containing all the transcriptions for the matching audio splits.
+
+### Transcribe with speaker detection
+
+Using pyannote.audio speaker diarization technique to create speaker embedings
+
+`$ python3 transcribe.py --path "path/to/input.wav" --speakers 2`
 
 ### Sources:
 
 3.1. https://github.com/openai/whisper
 
-3.2. Speaker Diarization: https://colab.research.google.com/drive/11ccdRYZSHBbUYI9grn6S1O67FVyvCKyL#scrollTo=ap_Oozugv3t7
+3.2. Speaker Diarization implementation (MONO CHANNEL!): https://colab.research.google.com/drive/11ccdRYZSHBbUYI9grn6S1O67FVyvCKyL#scrollTo=ap_Oozugv3t7
+
+3.3. Speaker Diarization resources: https://huggingface.co/spaces/openai/whisper/discussions/4
+
+3.4. Speaker Diarization Cluster Plot: https://medium.com/@xriteshsharmax/speaker-diarization-using-whisper-asr-and-pyannote-f0141c85d59a
 
 ## Image Object Detection (PyTorch)
 

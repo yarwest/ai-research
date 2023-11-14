@@ -12,8 +12,8 @@ import wave
 from pydub import AudioSegment
 import numpy as np
 import subprocess
-
-import pyannote.audio
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -41,7 +41,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", help="Path to audio file to be transcribed", type=str, required=False)
     parser.add_argument("--speakers", help="Number of unique speakers in audio file", type=int, default=1, required=False)
-    parser.add_argument("--split", help="Pass True to split original audio file in to seperate files for each segment", type=bool, required=False)
+    parser.add_argument("--split", help="Pass True to split original audio file into seperate files for each detected speech segment", type=bool, required=False)
 
     return parser.parse_args()
 
@@ -111,10 +111,12 @@ def sliceSegments(segments, baseAudio):
 
     return exportedSegments
 
-def toWav(path):
-    logging.info('---- Converting file to WAV ----')
+def toWav(path, fullPath):
+    logging.info('---- Converting file to single channel WAV ----')
     file = path.split('.')[0]
-    subprocess.call(['ffmpeg', '-i', path, f'{file}.wav', '-y'])
+    outPath = f'{getFilePath(f"{DATA_DIR}/{file}-mono")}.wav'
+    subprocess.call(['ffmpeg', '-i', fullPath, '-ac', '1', outPath, '-y'])
+    return outPath
 
 def segment_embedding(segment, duration, path):
   audio = Audio()
@@ -128,12 +130,34 @@ def segment_embedding(segment, duration, path):
 def time(secs):
   return datetime.timedelta(seconds=round(secs))
 
+def plot(embeddings, segments, labels):
+    pca = PCA(n_components=2, random_state=42)
+    embeddings_2d = pca.fit_transform(embeddings)
+
+    # Plot the clusters
+    plt.figure(figsize=(10, 8))
+    for i, segment in enumerate(segments):
+        speaker_id = labels[i] + 1
+        x, y = embeddings_2d[i]
+        color='green'
+        if(speaker_id > 1):
+            color='red'
+        plt.scatter(x, y,
+                    edgecolor=color,
+                    marker=f'$\\speaker{speaker_id}$',
+                    label=f'SPEAKER {speaker_id}')
+
+    plt.title("Speaker Diarization Clusters (PCA Visualization)")
+    plt.xlabel("Principal Component 1")
+    plt.ylabel("Principal Component 2")
+    plt.legend()
+    plt.savefig('./out/speaker-distribution.png')
+
 def processFile(file, args):
-    filePath = getFilePath(f"{DATA_DIR}/{file}")
-    if not os.path.isfile(filePath):
+    originalFilePath = getFilePath(f"{DATA_DIR}/{file}")
+    if not os.path.isfile(originalFilePath):
         return
-    if file[-3:] != 'wav':
-        toWav(file)
+    filePath = toWav(file, originalFilePath)
     model = whisper.load_model("base")
     logging.info('---- Transcribing audio ----')
     segments = transcribe(file, filePath, model)
@@ -150,6 +174,7 @@ def processFile(file, args):
 
     if(args.speakers > 1):
         logging.info('---- Speaker detection ----')
+        
         with contextlib.closing(wave.open(filePath,'r')) as f:
             frames = f.getnframes()
             rate = f.getframerate()
@@ -167,13 +192,15 @@ def processFile(file, args):
             segments[i]["speaker"] = 'SPEAKER ' + str(labels[i] + 1)
 
         logging.info('---- Saving speaker detection transcript ----')
-        f = open(f"./{OUT_DIR}/{file}-transcript.txt", "w", encoding="utf-8")
+        f = open(f"./{OUT_DIR}/{file}-speakers.txt", "w", encoding="utf-8")
 
         for (i, segment) in enumerate(segments):
             if i == 0 or segments[i - 1]["speaker"] != segment["speaker"]:
                 f.write("\n" + segment["speaker"] + ' ' + str(time(segment["start"])) + '\n')
             f.write(segment["text"][1:] + ' ')
         f.close()
+
+        plot(embeddings, segments, labels)
 
 DATA_DIR = 'data'
 OUT_DIR = 'out'
