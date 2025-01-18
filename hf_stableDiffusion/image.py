@@ -66,7 +66,7 @@ def main(args):
                                                     #revision="fp16", torch_dtype=torch.float32
             )
 
-    if(args.batch_size > 1):
+    if(args.batch_size & args.batch_size > 1):
         generator = [torch.manual_seed(args.seed - i) for i in range(args.batch_size)]
         nImages = args.batch_size
     else:

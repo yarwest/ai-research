@@ -17,6 +17,9 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--character", help="Character prompt", type=str, required=False, default="")
     parser.add_argument("--medium", help="Medium prompt collection", type=str, required=False, default="")
+    parser.add_argument("--num_inference_steps", help="The number of inference steps. If you want faster results you can use a smaller number. If you want potentially higher quality results, you can use larger numbers.", type=int, required=False, default=50)
+    parser.add_argument("--seed", help="Seed used for generation of random noise starting image", type=int, required=False, default=512)
+    parser.add_argument("--count", help="Number of generated images", type=int, required=False, default=5)
     return parser.parse_args()
 
 def main(args):
@@ -35,12 +38,12 @@ def main(args):
         img_args = argparse.Namespace(
             prompt=f"{char},{','.join(prompts)}",
             negative_prompt=','.join(negativePrompt),
-            batch_size=5,
-            seed=1520,
-            count=1,
+            batch_size=1,
+            count=args.count,
+            seed=args.seed if args.seed else 1520,
             img_w=512,
             img_h=512,
-            num_inference_steps=15,
+            num_inference_steps=args.num_inference_steps if args.num_inference_steps else 15,
             output_file=f"{char}-{medium}",
             base_img=None,
             mask_img=None,

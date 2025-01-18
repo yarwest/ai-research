@@ -34,7 +34,16 @@ def getNegativeMedPrompts():
             "bad art",
             "bad drawing",
             "broken lines",
-        ]
+        ],
+        "portrait": [
+            "blurry",
+            "unfoccused",
+            "out of frame",
+            "amateur",
+            "low resolution",
+            "low details",
+            "disfigured",
+        ],
     }
 
 def getNegativePrompts():

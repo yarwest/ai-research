@@ -36,6 +36,10 @@ Generate an image based on a text prompt.
 
 `$ python3 image.py --prompt "alien" --img_h 768 --num_inference_steps 25 --seed 1024`
 
+### Character generator
+
+`$ python3 characterGenerator.py --character "Angelina Jolie" --num_inference_steps 25 --seed 1024 --medium portrait`
+
 ### img2img
 
 Transform an existing image based on a text prompt.
@@ -196,3 +200,5 @@ Comment line 169 (`LayerId = cv2.dnn.DictValue`) in `pytorch_objectDetection/.ve
 4.1. VOC Object Detection Dataset: https://pjreddie.com/projects/pascal-voc-dataset-mirror/
 
 4.2. Foreground extraction using grabcut: https://www.geeksforgeeks.org/python-foreground-extraction-in-an-image-using-grabcut-algorithm/
+
+4.3. https://docs.opencv.org/3.4/d8/d83/tutorial_py_grabcut.html
