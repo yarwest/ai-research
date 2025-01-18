@@ -38,7 +38,7 @@ def main(args):
         img_args = argparse.Namespace(
             prompt=f"{char},{','.join(prompts)}",
             negative_prompt=','.join(negativePrompt),
-            batch_size=1,
+            batch_size=args.count,
             count=args.count,
             seed=args.seed if args.seed else 1520,
             img_w=512,

@@ -113,6 +113,8 @@ When choosing image sizes, we advise the following:
 
 1.11. LoRA: https://www.ml6.eu/blogpost/low-rank-adaptation-a-technical-deep-dive
 
+12. OpenAI Prompt generation: https://platform.openai.com/docs/guides/prompt-generation
+
 ## Coqui TTS (coqui_tts)
 
 ### Voice cloning
